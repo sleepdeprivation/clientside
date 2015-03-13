@@ -7,8 +7,8 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/../../../../../asdf/cburke/Desktop/android-sdk-linux/cs370/hermes" />
-            <option value="$PROJECT_DIR$/../../../../../asdf/cburke/Desktop/android-sdk-linux/cs370/hermes/app" />
+            <option value="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside" />
+            <option value="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/app" />
           </set>
         </option>
       </GradleProjectSettings>
