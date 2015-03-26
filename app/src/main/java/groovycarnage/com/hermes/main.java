@@ -1,8 +1,8 @@
 package groovycarnage.com.hermes;
 
-import android.content.BroadcastReceiver;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -23,70 +23,54 @@ import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.MapFragment;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.Gson;
+import com.google.gson.JsonElement;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.ResponseHandler;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.BasicResponseHandler;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+
+import groovycarnage.com.hermes.model.Message;
+import groovycarnage.com.hermes.utility.DataSender;
+import groovycarnage.com.hermes.utility.GPSListener;
 
 
 public class main extends ActionBarActivity
-                implements  GoogleApiClient.ConnectionCallbacks,             //we have to implement these to use GoogleApiClient
-                            GoogleApiClient.OnConnectionFailedListener,
-                            LocationListener,
-                            OnMapReadyCallback
+                        implements
+                            OnMapReadyCallback,
+                            LocationListener
 {
 
-    public GoogleApiClient mGoogleApiClient;
-    public LocationRequest mLocationRequest;
+
     public GoogleMap map = null;
     public Location lastLocation = null;
+    public GPSListener gpsListener;
+    public DataSender dataTransferOut = new DataSender();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        gpsListener = new GPSListener(this.getBaseContext(), this);
+        gpsListener.connect();  //we will get notified of location updates now
+
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map_display);
+
         mapFragment.getMapAsync(this);
-        LocationManager m = (LocationManager) this.getSystemService(this.LOCATION_SERVICE);
-        Log.d("GPS_STUFF", "CREATING API CLIENT");
-        createAPIClient();
-        Log.d("GPS_STUFF", "ATTEMPTING CONNECTION");
-        createLocationRequest();
-        mGoogleApiClient.connect();
-    }
-
-
-    private void createAPIClient(){
-        mGoogleApiClient = new GoogleApiClient.Builder(this)
-                .addConnectionCallbacks(this)           //hook up to our overriden callbacks
-                .addOnConnectionFailedListener(this)
-                .addApi(LocationServices.API)           //and we'll need this api
-                .build();
-    }
-
-    private void createLocationRequest(){
-        mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(500);
-        mLocationRequest.setFastestInterval(400);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
-    }
-
-    private void startLocationUpdates(){
-        Log.d("GPS_STUFF","REQUESTING UPDATES");
-
-        PendingResult<Status> answer =
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        answer.setResultCallback(new ResultCallback<Status>() {
-            @Override
-            public void onResult(Status status) {
-                Log.d("GPS_STUFF","RECEIVED STATUS");
-                Log.d("GPS_STUFF", "SUCCESS: " + status.isSuccess());
-                Log.d("GPS_STUFF", "STATUS: " + status.getStatus());
-                Log.d("GPS_STUFF", "STATUS MESSAGE: " + status.getStatusMessage());
-            }
-        });
-
 
     }
+
+
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -111,47 +95,30 @@ public class main extends ActionBarActivity
     }
 
 
-    /*
-        Just display the users location for now
-     */
-    @Override
-    public void onConnected(Bundle bundle) {
-        Log.d("GPS_STUFF","CONNECTED");
-        startLocationUpdates();
-    }
-
-    @Override
-    public void onConnectionSuspended(int i) {
-        Log.d("GPS_STUFF", "CONNECTION SUSPENDED");
-    }
-
-    @Override
-    public void onConnectionFailed(ConnectionResult connectionResult) {
-        Log.d("GPS_STUFF", "CONNECTION FAILED");
-    }
-
-
-
-
-
-    @Override
-    public void onLocationChanged(Location location) {
-        Log.d("GPS_STUFF","LOCATION CHANGED");
-        if(location != null){
-            ((TextView) findViewById(R.id.latDisplay)).setText(Double.toString(location.getLatitude()));
-            ((TextView) findViewById(R.id.lonDisplay)).setText(Double.toString(location.getLongitude()));
-            if(map != null){
-                LatLng me = new LatLng(location.getLatitude(), location.getLongitude());
-                map.moveCamera(CameraUpdateFactory.newLatLngZoom(me, 13));
-            }
-        }
-        lastLocation = location;
-    }
-
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setMyLocationEnabled(true);
+    }
+
+    /*
+        We will be notified by our GPSListener
+     */
+    @Override
+    public void onLocationChanged(Location location) {
+        Log.d("GPS_STUFF","LOCATION CHANGED");
+        if(location != null){
+            String latString = Double.toString(location.getLatitude());
+            String lonString = Double.toString(location.getLatitude());
+            ((TextView) findViewById(R.id.latDisplay)).setText(latString);
+            ((TextView) findViewById(R.id.lonDisplay)).setText(lonString);
+            if(map != null){
+                LatLng me = new LatLng(location.getLatitude(), location.getLongitude());
+                map.moveCamera(CameraUpdateFactory.newLatLngZoom(me, 13));
+            }
+            dataTransferOut.execute("{\"Lat\":"+latString+",\"Lon\":"+lonString+"}");
+        }
+        lastLocation = location;
     }
 }
