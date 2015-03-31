@@ -9,6 +9,7 @@
           <set>
             <option value="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside" />
             <option value="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/app" />
+            <option value="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/volley" />
           </set>
         </option>
       </GradleProjectSettings>
