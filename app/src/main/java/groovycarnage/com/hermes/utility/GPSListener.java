@@ -11,6 +11,7 @@ import com.google.android.gms.common.api.GoogleApiClient;
 import com.google.android.gms.common.api.PendingResult;
 import com.google.android.gms.common.api.ResultCallback;
 import com.google.android.gms.common.api.Status;
+import com.google.android.gms.common.data.DataBufferObserver;
 import com.google.android.gms.location.LocationListener;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -18,31 +19,41 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.io.IOException;
+import java.util.Observable;
+import java.util.Observer;
 
 import groovycarnage.com.hermes.R;
 
 /**
  * Created by cburke on 3/26/15.
  */
-public class GPSListener
+public final class GPSListener extends Observable
         implements
             GoogleApiClient.ConnectionCallbacks,             //we have to implement these to use GoogleApiClient
             GoogleApiClient.OnConnectionFailedListener,
             LocationListener
 {
 
+    private static GPSListener instance = null;
+
     private GoogleApiClient mGoogleApiClient;
     private LocationRequest mLocationRequest;
 
-    public LocationListener parentRelay;
     public Context context;
 
 
-    public GPSListener(Context ctxt, LocationListener parent){
-        this.context = ctxt;
-        this.parentRelay = parent;
+    private GPSListener(Context ctxt){
+        this.context = ctxt.getApplicationContext();
         createAPIClient();
         createLocationRequest();
+        connect();
+    }
+
+    public static GPSListener getInstance(Context context){
+        if(instance == null){
+            instance = new GPSListener(context);
+        }
+        return instance;
     }
 
     public void connect(){
@@ -61,11 +72,10 @@ public class GPSListener
     private void createLocationRequest(){
         Log.d("GPS_STUFF", "ATTEMPTING CONNECTION");
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(500);
-        mLocationRequest.setFastestInterval(400);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(10000);
+        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
     }
-
 
     private void startLocationUpdates(){
         Log.d("GPS_STUFF", "REQUESTING UPDATES");
@@ -84,8 +94,6 @@ public class GPSListener
 
 
     }
-
-
 
     /*
         Just display the users location for now
@@ -106,13 +114,9 @@ public class GPSListener
         Log.d("GPS_STUFF", "CONNECTION FAILED");
     }
 
-
-
-
-
     @Override
     public void onLocationChanged(Location location) {
-        parentRelay.onLocationChanged(location);
+        this.notifyObservers(location);
     }
 
 
