@@ -26,7 +26,10 @@ android {
 
 dependencies {
     compile fileTree(include: ['*.jar'], dir: 'libs')
+    //google GSON from mavenCentral
+    compile project(':volley')
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.google.android.gms:play-services:6.5.87'
-    compile 'com.google.code.gson:gson:2.3.1'                 //google GSON from mavenCentral
+    compile 'com.google.code.gson:gson:2.3.1'
+    compile 'com.android.support:support-v4:21.0.3'
 }
