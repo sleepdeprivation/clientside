@@ -1,8 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">hermes</string>
+    <string name="app_name">clientSide</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="title_activity_op_list_view">op_list_view</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="title_thread_list">threads</string>
+    <string name="title_thread_detail">thread Detail</string>
+    <string name="action_list_threads">show list</string>
+    <string name="action_show_map">show map</string>
 
 </resources>
