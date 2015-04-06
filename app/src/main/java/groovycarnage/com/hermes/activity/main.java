@@ -43,6 +43,7 @@ public class main extends ActionBarActivity
 
         gpsListener = GPSListener.getInstance(this.getApplicationContext());
         gpsListener.addObserver(this);  //we will get notified of location updates now
+        gpsListener.connect();
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map_display);
@@ -100,11 +101,9 @@ public class main extends ActionBarActivity
     }
 
 
-
     @Override
     public void update(Observable observable, Object data) {
-        if(observable.getClass() == GPSListener.class) {
+            Log.d("GPS_STUFF", "observed");
             receiveLocation((Location) data);
-        }
     }
 }

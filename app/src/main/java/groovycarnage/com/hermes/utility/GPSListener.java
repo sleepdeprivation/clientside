@@ -72,9 +72,9 @@ public final class GPSListener extends Observable
     private void createLocationRequest(){
         Log.d("GPS_STUFF", "ATTEMPTING CONNECTION");
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
-        mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+        mLocationRequest.setInterval(500);
+        mLocationRequest.setFastestInterval(300);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
     }
 
     private void startLocationUpdates(){
@@ -116,6 +116,8 @@ public final class GPSListener extends Observable
 
     @Override
     public void onLocationChanged(Location location) {
+        Log.d("GPS_STUFF", "LOCATION CHANGED");
+        this.setChanged();
         this.notifyObservers(location);
     }
 
