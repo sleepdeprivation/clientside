@@ -103,7 +103,9 @@ public class main extends ActionBarActivity
 
     @Override
     public void update(Observable observable, Object data) {
-            Log.d("GPS_STUFF", "observed");
+        Log.d("GPS_STUFF", "observed");
+        if(observable.getClass() == gpsListener.getClass()) {
             receiveLocation((Location) data);
+        }
     }
 }
