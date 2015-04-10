@@ -43,7 +43,6 @@ public class main extends ActionBarActivity
 
         gpsListener = GPSListener.getInstance(this.getApplicationContext());
         gpsListener.addObserver(this);  //we will get notified of location updates now
-        gpsListener.connect();
 
         MapFragment mapFragment = (MapFragment) getFragmentManager()
                 .findFragmentById(R.id.map_display);
@@ -73,6 +72,13 @@ public class main extends ActionBarActivity
         }else if(id == R.id.action_show_list) {
             Intent i = new Intent(getApplicationContext(), threadListActivity.class);
             startActivity(i);
+        }else if(id == R.id.action_new_OP) {
+            if(lastLocation != null) {
+                Intent i = new Intent(getApplicationContext(), SubmitNewOp.class);
+                i.putExtra("LATITUDE", lastLocation.getLatitude());
+                i.putExtra("LONGITUDE", lastLocation.getLongitude());
+                startActivity(i);
+            }
         }
 
         return super.onOptionsItemSelected(item);

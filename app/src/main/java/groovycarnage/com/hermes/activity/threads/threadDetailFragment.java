@@ -68,7 +68,7 @@ public class threadDetailFragment extends ListFragment {
 
 
 
-        JsonArrayRequest request = new JsonArrayRequest("http://www.scary4cat.com:8003/getRepliesTo?messageID=" + Integer.toString(OP.messageID),
+        JsonArrayRequest request = new JsonArrayRequest("http://serenity-valley.ddns.net:8001/getRepliesTo?parentID=" + Integer.toString(OP.messageID),
                 responseListener,
                 new Response.ErrorListener() {
                     @Override

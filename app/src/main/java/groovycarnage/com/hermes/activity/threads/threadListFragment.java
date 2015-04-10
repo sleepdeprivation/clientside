@@ -100,20 +100,21 @@ public class threadListFragment extends ListFragment
                 setListAdapter(new headListAdapter(getActivity().getApplicationContext(), R.layout.activity_thread_list, OPs));
             }
         };
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
 
+                Log.d("JSON", "JSON FAIL1");
+                Log.d("JSON", error.getMessage());
+            }
+        };
 
+        //stuck at school for the moment
+        String url = "http://serenity-valley.ddns.net:8001/getPostsByRange?latMin=38.336185&lonMin=-122.685516&latMax=38.345812&lonMax=-122.66805";
 
-        JsonArrayRequest request = new JsonArrayRequest("http://www.scary4cat.com:8003/getAllHeads",
-                responseListener,
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
+        JsonArrayRequest request = new JsonArrayRequest(url, responseListener, errorListener);
 
-                        Log.d("JSON", "JSON FAIL");
-                        Log.d("JSON", error.getMessage());
-                    }
-                });
-        Log.d("JSON", "ADDING REQUEST TO QUEUE");
+        Log.d("JSON", "ADDING REQUEST TO QUEUE1");
         VolleyQueue.getRequestQueue(getActivity().getApplicationContext()).add(request);
 
     }
@@ -156,6 +157,7 @@ public class threadListFragment extends ListFragment
     public void onListItemClick(ListView listView, View view, int position, long id) {
         super.onListItemClick(listView, view, position, id);
         Message OP = ((Message) getListAdapter().getItem(position));
+        OP.parentID = -1;
         mCallbacks.onItemSelected(OP);
     }
 
