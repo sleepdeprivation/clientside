@@ -71,7 +71,17 @@ public class main extends ActionBarActivity
             return true;
         }else if(id == R.id.action_show_list) {
             Intent i = new Intent(getApplicationContext(), threadListActivity.class);
+
+            i.putExtra("LATITUDE", lastLocation.getLatitude());
+            i.putExtra("LONGITUDE", lastLocation.getLongitude());
             startActivity(i);
+        }else if(id == R.id.action_new_OP) {
+            if(lastLocation != null) {
+                Intent i = new Intent(getApplicationContext(), SubmitNewOp.class);
+                i.putExtra("LATITUDE", lastLocation.getLatitude());
+                i.putExtra("LONGITUDE", lastLocation.getLongitude());
+                startActivity(i);
+            }
         }
 
         return super.onOptionsItemSelected(item);
@@ -103,7 +113,8 @@ public class main extends ActionBarActivity
 
     @Override
     public void update(Observable observable, Object data) {
-        if(observable.getClass() == GPSListener.class) {
+        Log.d("GPS_STUFF", "observed");
+        if(observable.getClass() == gpsListener.getClass()) {
             receiveLocation((Location) data);
         }
     }

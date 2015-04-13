@@ -40,8 +40,13 @@ public class AdapterViewGenerators {
 
         content.setText(message.content);
         poster.setText("username here");
+<<<<<<< HEAD
         latitude.setText(Float.toString(message.lat));
         longitude.setText(Float.toString(message.lon));
+=======
+        latitude.setText(Double.toString(message.lat));
+        longitude.setText(Double.toString(message.lon));
+>>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
 
         return itemView;
     }

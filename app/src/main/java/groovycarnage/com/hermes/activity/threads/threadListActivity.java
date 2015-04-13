@@ -57,6 +57,7 @@ public class threadListActivity extends ActionBarActivity
                     .setActivateOnItemClick(true);
 
         }
+
     }
 
     /**

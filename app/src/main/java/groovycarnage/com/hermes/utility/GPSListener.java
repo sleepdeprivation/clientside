@@ -72,9 +72,15 @@ public final class GPSListener extends Observable
     private void createLocationRequest(){
         Log.d("GPS_STUFF", "ATTEMPTING CONNECTION");
         mLocationRequest = new LocationRequest();
+<<<<<<< HEAD
         mLocationRequest.setInterval(10000);
         mLocationRequest.setFastestInterval(5000);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
+=======
+        mLocationRequest.setInterval(500);
+        mLocationRequest.setFastestInterval(300);
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+>>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
     }
 
     private void startLocationUpdates(){
@@ -95,6 +101,13 @@ public final class GPSListener extends Observable
 
     }
 
+<<<<<<< HEAD
+=======
+    public void stopLocationUpdates(){
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
+
+>>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
     /*
         Just display the users location for now
      */
@@ -116,6 +129,11 @@ public final class GPSListener extends Observable
 
     @Override
     public void onLocationChanged(Location location) {
+<<<<<<< HEAD
+=======
+        Log.d("GPS_STUFF", "LOCATION CHANGED");
+        this.setChanged();
+>>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
         this.notifyObservers(location);
     }
 
