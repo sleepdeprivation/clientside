@@ -9,6 +9,8 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 
+import com.google.android.gms.maps.model.LatLng;
+
 import groovycarnage.com.hermes.R;
 import groovycarnage.com.hermes.model.Message;
 
@@ -57,6 +59,8 @@ public class threadListActivity extends ActionBarActivity
                     .setActivateOnItemClick(true);
 
         }
+
+        LatLng location = new LatLng(getIntent().getDoubleExtra("LATITUDE"), getIntent().getStringExtra("Longitude"));
     }
 
     /**

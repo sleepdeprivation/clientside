@@ -95,6 +95,10 @@ public final class GPSListener extends Observable
 
     }
 
+    public void stopLocationUpdates(){
+        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+    }
+
     /*
         Just display the users location for now
      */

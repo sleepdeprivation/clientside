@@ -71,6 +71,8 @@ public class main extends ActionBarActivity
             return true;
         }else if(id == R.id.action_show_list) {
             Intent i = new Intent(getApplicationContext(), threadListActivity.class);
+            i.putExtra("LATITUDE", lastLocation.getLatitude());
+            i.putExtra("LONGITUDE", lastLocation.getLongitude());
             startActivity(i);
         }else if(id == R.id.action_new_OP) {
             if(lastLocation != null) {

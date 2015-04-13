@@ -19,6 +19,7 @@ import com.google.gson.GsonBuilder;
 import org.json.JSONArray;
 
 import groovycarnage.com.hermes.R;
+import groovycarnage.com.hermes.activity.SubmitNewOp;
 import groovycarnage.com.hermes.activity.main;
 import groovycarnage.com.hermes.adapters.headListAdapter;
 import groovycarnage.com.hermes.model.Message;
@@ -217,6 +218,13 @@ public class threadListFragment extends ListFragment
             Intent i = new Intent(getActivity().getApplicationContext(), main.class);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
+        }else if(id == R.id.action_new_OP) {
+            if(lastLocation != null) {
+                Intent i = new Intent(getApplicationContext(), SubmitNewOp.class);
+                i.putExtra("LATITUDE", lastLocation.getLatitude());
+                i.putExtra("LONGITUDE", lastLocation.getLongitude());
+                startActivity(i);
+            }
         }
         return super.onOptionsItemSelected(item);
     }
