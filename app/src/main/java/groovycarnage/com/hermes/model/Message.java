@@ -30,16 +30,7 @@ public class Message {
     //implementing parcelable allows us to quickly send this object from one activity to another
 public class Message implements Parcelable {
 
-<<<<<<< HEAD
-    public int messageID;
-    public int posterID;
-    public int parentID;
-    public String content;
-    public float lat;
-    public float lon;
-    public int numUpvotes;
-    public int numDownvotes;
-=======
+
     public Integer messageID = null;
     public int posterID;
     public Integer parentID = null;
@@ -52,7 +43,6 @@ public class Message implements Parcelable {
     public Message(){
 
     }
->>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
 
 
     protected Message(Parcel in) {
@@ -60,13 +50,9 @@ public class Message implements Parcelable {
         posterID = in.readInt();
         parentID = in.readInt();
         content = in.readString();
-<<<<<<< HEAD
-        lat = in.readFloat();
-        lon = in.readFloat();
-=======
+
         lat = in.readDouble();
         lon = in.readDouble();
->>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
         numUpvotes = in.readInt();
         numDownvotes = in.readInt();
     }
@@ -82,13 +68,8 @@ public class Message implements Parcelable {
         dest.writeInt(posterID);
         dest.writeInt(parentID);
         dest.writeString(content);
-<<<<<<< HEAD
-        dest.writeFloat(lat);
-        dest.writeFloat(lon);
-=======
         dest.writeDouble(lat);
         dest.writeDouble(lon);
->>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
         dest.writeInt(numUpvotes);
         dest.writeInt(numDownvotes);
     }

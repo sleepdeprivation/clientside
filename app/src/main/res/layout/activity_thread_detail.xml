@@ -1,6 +1,4 @@
-<<<<<<< HEAD
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-=======
+
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:orientation="vertical"
@@ -12,13 +10,10 @@
         layout="@layout/op_list_item" />
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
->>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
     xmlns:tools="http://schemas.android.com/tools" android:id="@+id/thread_detail_container"
     android:layout_width="match_parent" android:layout_height="match_parent"
     tools:context="groovycarnage.com.hermes.activity.threads.threadDetailActivity"
     tools:ignore="MergeRootFrame" />
-<<<<<<< HEAD
-=======
+
 
 </LinearLayout>
->>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17

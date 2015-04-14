@@ -24,16 +24,7 @@ public class replyListAdapter extends ArrayAdapter<Message> {
 
     @Override
     public View getView (int position, View convertView, ViewGroup parent){
-<<<<<<< HEAD
-
-        if(position == 0) { //the head message goes first
-            return AdapterViewGenerators.generateOPView(position, convertView, parent, this);
-        }else{
             return AdapterViewGenerators.generateReplyView(position, convertView, parent, this);
-        }
-=======
-            return AdapterViewGenerators.generateReplyView(position, convertView, parent, this);
->>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
     }
 
 

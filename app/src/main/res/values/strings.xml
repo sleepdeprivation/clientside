@@ -11,11 +11,8 @@
     <string name="title_thread_detail">thread Detail</string>
     <string name="action_list_threads">show list</string>
     <string name="action_show_map">show map</string>
-<<<<<<< HEAD
-=======
     <string name="title_activity_submit_new_op">SubmitNewOp</string>
     <string name="action_new_op">create new message</string>
     <string name="submit">submit</string>
->>>>>>> ca57aa86b904643f662eeb4e0bbd74fa83180d17
 
 </resources>
