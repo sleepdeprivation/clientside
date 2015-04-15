@@ -2,6 +2,8 @@ package groovycarnage.com.hermes.activity;
 
 import android.content.Intent;
 import android.location.Location;
+import android.os.AsyncTask;
+import android.support.annotation.NonNull;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -18,7 +20,6 @@ import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.LatLngBounds;
-import com.google.android.gms.maps.UiSettings;
 import com.google.android.gms.maps.model.PolygonOptions;
 import com.google.android.gms.maps.model.Polygon;
 import com.google.gson.GsonBuilder;
@@ -27,14 +28,18 @@ import org.json.JSONArray;
 
 import java.util.Observable;
 import java.util.Observer;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Condition;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 
 import groovycarnage.com.hermes.R;
 import groovycarnage.com.hermes.activity.threads.threadListActivity;
-import groovycarnage.com.hermes.adapters.headListAdapter;
 import groovycarnage.com.hermes.model.Message;
-import groovycarnage.com.hermes.utility.DataSender;
 import groovycarnage.com.hermes.utility.GPSListener;
 import groovycarnage.com.hermes.utility.SphericalUtilFunctions;
+import groovycarnage.com.hermes.utility.URLUtil;
 import groovycarnage.com.hermes.utility.VolleyQueue;
 
 
@@ -46,27 +51,120 @@ public class main extends ActionBarActivity
 
 
     public GoogleMap map = null;
-    public Location lastLocation = null;
+    public LatLng lastLocation = null;
     public GPSListener gpsListener;
-    public DataSender dataTransferOut = new DataSender();
-    public Message[] OPs;
+    public Message[] OPs = null;
+    public double boxHeight = 5;
+    public double boxWidth = 3.5;
+
+    public static String WIDTHID = "BOXW";
+    public static String HEIGHTID = "BOXH";
+    public static String LONGID = "LONGITUDE";
+    public static String LATID = "LATITUDE";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
+        Log.d("LIFECYCLE", "CREATE");
+
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+    }
 
-        gpsListener = GPSListener.getInstance(this.getApplicationContext());
-        gpsListener.addObserver(this);  //we will get notified of location updates now
+//causes exceptions :(
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        if(OPs != null) {
+            savedInstanceState.putParcelableArray("OPs", OPs);
+        }
 
-        MapFragment mapFragment = (MapFragment) getFragmentManager()
-                .findFragmentById(R.id.map_display);
+        savedInstanceState.putDouble("boxHeight", 5);
+        savedInstanceState.putDouble("boxWidth", 3.5);
+        if(lastLocation != null) {
+            savedInstanceState.putDouble("LATITUDE", lastLocation.latitude);
+            savedInstanceState.putDouble("LONGITUDE", lastLocation.longitude);
+        }
 
-        mapFragment.getMapAsync(this);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onRestoreInstanceState(Bundle savedInstanceState) {
+        boxHeight = savedInstanceState.getDouble("boxHeight", 5);
+        boxWidth = savedInstanceState.getDouble("boxWidth", 3.5);
+        try {
+            lastLocation = new LatLng(savedInstanceState.getDouble("LATITUDE"),
+                    savedInstanceState.getDouble("LONGITUDE"));
+        }catch(NullPointerException e){
+            lastLocation = null;
+        }
+        try {
+            OPs = ((Message[]) savedInstanceState.getParcelableArray("OPs"));
+        }catch(NullPointerException e){
+            OPs = null;
+        }
+
+        super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    @Override
+    protected void onStart() {
+
+        Log.d("LIFECYCLE", "start");
+        super.onStart();
+    }
+    @Override
+    protected void onRestart(){
+
+        Log.d("LIFECYCLE", "restart");
+        super.onRestart();
+    }
+    @Override
+    protected void onResume(){
+
+        getMap();
+        getGPS();
+
+        Log.d("LIFECYCLE", "resume");
+        super.onResume();
+    }
+    @Override
+    protected void onStop(){
+
+        Log.d("LIFECYCLE", "stop");
+        super.onStop();
+    }
+
+    @Override
+    protected void onPause(){
+
+        Log.d("LIFECYCLE", "pause");
+        super.onPause();
+    }
+
+    @Override
+    protected void onDestroy(){
+
+        Log.d("LIFECYCLE", "destroy");
+        if(gpsListener != null) {
+            gpsListener.deleteObserver(this);
+            gpsListener.stopLocationUpdates();
+        }
+        super.onDestroy();
+    }
 
 
 
+    public void tryUI(){
+        if(lastLocation != null){
+            if(OPs != null){
+                if(map != null){
+                    formatMap(lastLocation);
+                    makeMarkers();
+                }
+            }
+        }
     }
 
     private void makeMarkers()
@@ -102,14 +200,16 @@ public class main extends ActionBarActivity
             return true;
         }else if(id == R.id.action_show_list) {
             Intent i = new Intent(getApplicationContext(), threadListActivity.class);
-            i.putExtra("LATITUDE", lastLocation.getLatitude());
-            i.putExtra("LONGITUDE", lastLocation.getLongitude());
+            i.putExtra(LATID, lastLocation.latitude);
+            i.putExtra(LONGID, lastLocation.longitude);
+            i.putExtra(WIDTHID, boxWidth);
+            i.putExtra(HEIGHTID, boxHeight);
             startActivity(i);
         }else if(id == R.id.action_new_OP) {
             if(lastLocation != null) {
                 Intent i = new Intent(getApplicationContext(), SubmitNewOp.class);
-                i.putExtra("LATITUDE", lastLocation.getLatitude());
-                i.putExtra("LONGITUDE", lastLocation.getLongitude());
+                i.putExtra("LATITUDE", lastLocation.latitude);
+                i.putExtra("LONGITUDE", lastLocation.longitude);
                 startActivity(i);
             }
         }
@@ -117,15 +217,34 @@ public class main extends ActionBarActivity
         return super.onOptionsItemSelected(item);
     }
 
-
-
     @Override
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setMyLocationEnabled(true);
+        tryUI();
+    }
+
+    public void receiveLocation(Location location){
+        Log.d("GPS_STUFF", "LOCATION CHANGED");
+        if (location != null) {
+            lastLocation = new LatLng(location.getLatitude(), location.getLongitude());
+            gpsListener.stopLocationUpdates();
+            requestOps();
+        }
+    }
 
 
-        // map.getUiSettings().setZoomGesturesEnabled(false);
+    public void getGPS(){
+        gpsListener = GPSListener.getInstance(this.getApplicationContext());
+        gpsListener.addObserver(this);  //we will get notified of location updates now
+        gpsListener.connect();
+    }
+
+    public void getMap(){
+        MapFragment mapFragment = (MapFragment) getFragmentManager()
+                .findFragmentById(R.id.map_display);
+
+        mapFragment.getMapAsync(this);
     }
 
     public void requestOps(){
@@ -137,8 +256,7 @@ public class main extends ActionBarActivity
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 OPs = gsonBuilder.create().fromJson(response.toString(), Message[].class);
                 Log.d("JSON", OPs[0].toString());
-                makeMarkers();
-
+                tryUI();
             }
         };
         Response.ErrorListener errorListener = new Response.ErrorListener() {
@@ -150,11 +268,11 @@ public class main extends ActionBarActivity
             }
         };
 
-        //stuck at school for the moment
-        //String url = "http://serenity-valley.ddns.net:8001/getPostsByRange?latMin=38.336185&lonMin=-122.685516&latMax=38.345812&lonMax=-122.66805";
-        String url = "http://scary4cat.com:8003/getPostsByRange?latMin=38.336185&lonMin=-122.685516&latMax=38.345812&lonMax=-122.66805";
+        LatLng[] rect = SphericalUtilFunctions.getRect(boxHeight, boxWidth, lastLocation);
 
+        String url = URLUtil.getPostsByRange(rect);
 
+        Log.d("JSON", "Main requesting resource from " + url);
 
         JsonArrayRequest request = new JsonArrayRequest(url, responseListener, errorListener);
 
@@ -163,22 +281,6 @@ public class main extends ActionBarActivity
 
     }
 
-
-    public void receiveLocation(Location location){
-        Log.d("GPS_STUFF", "LOCATION CHANGED");
-        if (location != null) {
-            //String latString = Double.toString(location.getLatitude());
-            //String lonString = Double.toString(location.getLongitude());
-            if (map != null) {
-                LatLng me = new LatLng(location.getLatitude(), location.getLongitude());
-                formatMap(me);
-                requestOps();
-                gpsListener.stopLocationUpdates();
-            }
-            //dataTransferOut.execute("{\"Lat\":"+latString+",\"Lon\":"+lonString+"}");
-        }
-        lastLocation = location;
-    }
 
     public void formatMap(LatLng me)
     {
@@ -190,10 +292,10 @@ public class main extends ActionBarActivity
 
         map.addMarker(new MarkerOptions()
                 .position(me)
-                .title("Hello world"));
+                .title("You"));
 
         // Create a LatLngBounds that specifies the bounds of the window.
-        LatLng rect[] = SphericalUtilFunctions.getRect(5, 3.5, me);
+        LatLng rect[] = SphericalUtilFunctions.getRect(boxHeight, boxWidth, me);
         LatLngBounds window = new LatLngBounds(rect[1], rect[0]);
 
         // Set the camera to the greatest possible zoom level that includes the bounds

@@ -81,24 +81,30 @@ public final class GPSListener extends Observable
     private void startLocationUpdates(){
         Log.d("GPS_STUFF", "REQUESTING UPDATES");
 
-        PendingResult<Status> answer =
-                LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
-        answer.setResultCallback(new ResultCallback<Status>() {
-            @Override
-            public void onResult(Status status) {
-                Log.d("GPS_STUFF","RECEIVED STATUS");
-                Log.d("GPS_STUFF", "SUCCESS: " + status.isSuccess());
-                Log.d("GPS_STUFF", "STATUS: " + status.getStatus());
-                Log.d("GPS_STUFF", "STATUS MESSAGE: " + status.getStatusMessage());
-            }
-        });
+        if(mGoogleApiClient.isConnected()) {
+
+            PendingResult<Status> answer =
+                    LocationServices.FusedLocationApi.requestLocationUpdates(mGoogleApiClient, mLocationRequest, this);
+            answer.setResultCallback(new ResultCallback<Status>() {
+                @Override
+                public void onResult(Status status) {
+                    Log.d("GPS_STUFF", "RECEIVED STATUS");
+                    Log.d("GPS_STUFF", "SUCCESS: " + status.isSuccess());
+                    Log.d("GPS_STUFF", "STATUS: " + status.getStatus());
+                    Log.d("GPS_STUFF", "STATUS MESSAGE: " + status.getStatusMessage());
+                }
+            });
+        }
 
 
     }
 
 
     public void stopLocationUpdates(){
-        LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+        if(mGoogleApiClient.isConnected()) {
+            LocationServices.FusedLocationApi.removeLocationUpdates(mGoogleApiClient, this);
+            mGoogleApiClient.disconnect();
+        }
     }
 
 

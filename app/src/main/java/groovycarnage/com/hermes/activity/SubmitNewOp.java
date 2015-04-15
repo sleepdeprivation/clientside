@@ -22,6 +22,7 @@ import org.json.JSONObject;
 import groovycarnage.com.hermes.R;
 import groovycarnage.com.hermes.adapters.headListAdapter;
 import groovycarnage.com.hermes.model.Message;
+import groovycarnage.com.hermes.utility.URLUtil;
 import groovycarnage.com.hermes.utility.VolleyQueue;
 
 
@@ -73,6 +74,11 @@ public class SubmitNewOp extends ActionBarActivity {
         m.lon = lon;
 
         try {
+
+
+            m.messageID = null;
+            m.parentID = null;
+
             JSONObject submission = new JSONObject(new GsonBuilder().create().toJson(m));
 
             Log.d("OP_SUBMISSION", submission.toString());
@@ -93,7 +99,7 @@ public class SubmitNewOp extends ActionBarActivity {
             };
 
             //stuck at school for the moment
-            String url = "http://serenity-valley.ddns.net:8001/submit/newop";
+            String url = URLUtil.submitOP();
 
             JsonObjectRequest request = new JsonObjectRequest(url, submission, responseListener, errorListener);
 

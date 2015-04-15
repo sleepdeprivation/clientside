@@ -9,7 +9,10 @@ import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
 
 
+import com.google.android.gms.maps.model.LatLng;
+
 import groovycarnage.com.hermes.R;
+import groovycarnage.com.hermes.activity.main;
 import groovycarnage.com.hermes.model.Message;
 
 /**
@@ -37,11 +40,30 @@ public class threadListActivity extends ActionBarActivity
      */
     private boolean mTwoPane;
     public static final String OP_ID = "OP_HEAD_MESSAGE";
+    private LatLng lastLocation;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Bundle b = getIntent().getExtras();
+
+        try {
+            lastLocation = new LatLng(b.getDouble(main.LATID),
+                    b.getDouble(main.LONGID));
+        }catch(NullPointerException e){
+            lastLocation = null;
+        }
+
+        double width = b.getDouble(main.WIDTHID, 5);
+        double height = b.getDouble(main.HEIGHTID, 3.5);
+
+        Log.d("BUNDLER-THREADS", Double.toString(lastLocation.latitude));
+
+
         setContentView(R.layout.activity_thread_list);
+
+        threadListFragment f = ((threadListFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.thread_list));
 
         if (findViewById(R.id.thread_detail_container) != null) {
             // The detail container view will be present only in the
@@ -52,11 +74,16 @@ public class threadListActivity extends ActionBarActivity
 
             // In two-pane mode, list items should be given the
             // 'activated' state when touched.
-            ((threadListFragment) getSupportFragmentManager()
-                    .findFragmentById(R.id.thread_list))
-                    .setActivateOnItemClick(true);
+            f.setActivateOnItemClick(true);
 
         }
+
+        f.location = lastLocation;
+
+        f.width = width;
+        f.height = height;
+
+        f.requestMessages();
 
     }
 

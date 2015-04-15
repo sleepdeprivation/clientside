@@ -14,6 +14,7 @@ import android.widget.ListView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
@@ -23,6 +24,8 @@ import groovycarnage.com.hermes.activity.SubmitNewOp;
 import groovycarnage.com.hermes.activity.main;
 import groovycarnage.com.hermes.adapters.headListAdapter;
 import groovycarnage.com.hermes.model.Message;
+import groovycarnage.com.hermes.utility.SphericalUtilFunctions;
+import groovycarnage.com.hermes.utility.URLUtil;
 import groovycarnage.com.hermes.utility.VolleyQueue;
 
 /**
@@ -53,6 +56,45 @@ public class threadListFragment extends ListFragment
      * The current activated item position. Only used on tablets.
      */
     private int mActivatedPosition = ListView.INVALID_POSITION;
+
+    public void requestMessages() {
+
+        Log.d("BUNDLE width", Double.toString(width));
+        Log.d("BUNDLE height", Double.toString(height));
+
+
+        Log.d("JSON", "FORMING REQUEST");
+        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("JSON", response.toString());
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                Message[] OPs = gsonBuilder.create().fromJson(response.toString(), Message[].class);
+                setListAdapter(new headListAdapter(getActivity().getApplicationContext(), R.layout.activity_thread_list, OPs));
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.d("JSON", "JSON FAIL1");
+                Log.d("JSON", error.getMessage());
+            }
+        };
+
+        LatLng[] rect = SphericalUtilFunctions.getRect(height, width, location);
+
+        String url = URLUtil.getPostsByRange(rect);
+
+        Log.d("JSON", "Requesting resource from " + url);
+
+        JsonArrayRequest request = new JsonArrayRequest(url, responseListener, errorListener);
+
+        Log.d("JSON", "ADDING REQUEST TO QUEUE12");
+        VolleyQueue.getRequestQueue(getActivity().getApplicationContext()).add(request);
+
+    }
 
     /**
      * A callback interface that all activities containing this fragment must
@@ -85,39 +127,14 @@ public class threadListFragment extends ListFragment
     public threadListFragment() {
     }
 
+    public LatLng location;
+    public double width;
+    public double height;
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setHasOptionsMenu(true);
-
-        Log.d("JSON", "FORMING REQUEST");
-        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                Log.d("JSON", response.toString());
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                Message[] OPs = gsonBuilder.create().fromJson(response.toString(), Message[].class);
-                Log.d("JSON", OPs[0].toString());
-                setListAdapter(new headListAdapter(getActivity().getApplicationContext(), R.layout.activity_thread_list, OPs));
-            }
-        };
-
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
-
-                Log.d("JSON", "JSON FAIL1");
-                Log.d("JSON", error.getMessage());
-            }
-        };
-
-        //stuck at school for the moment
-        String url = "http://serenity-valley.ddns.net:8001/getPostsByRange?latMin=38.336185&lonMin=-122.685516&latMax=38.345812&lonMax=-122.66805";
-
-        JsonArrayRequest request = new JsonArrayRequest(url, responseListener, errorListener);
-
-        Log.d("JSON", "ADDING REQUEST TO QUEUE1");
-        VolleyQueue.getRequestQueue(getActivity().getApplicationContext()).add(request);
 
     }
 

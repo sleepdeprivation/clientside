@@ -13,6 +13,7 @@ import android.widget.TextView;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
+import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.GsonBuilder;
 
 import org.json.JSONArray;
@@ -21,6 +22,7 @@ import groovycarnage.com.hermes.R;
 import groovycarnage.com.hermes.adapters.headListAdapter;
 import groovycarnage.com.hermes.adapters.replyListAdapter;
 import groovycarnage.com.hermes.model.Message;
+import groovycarnage.com.hermes.utility.URLUtil;
 import groovycarnage.com.hermes.utility.VolleyQueue;
 
 
@@ -39,6 +41,7 @@ public class threadDetailFragment extends ListFragment {
 
     private Message OP;
     private Message[] replyList;
+    private LatLng lastLocation;
 
     /**
      * Mandatory empty constructor for the fragment manager to instantiate the
@@ -51,9 +54,13 @@ public class threadDetailFragment extends ListFragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
+        setHasOptionsMenu(true);
+
         OP = getArguments().getParcelable(threadListActivity.OP_ID);
 
-        setHasOptionsMenu(true);
+        View OPView = this.getActivity().findViewById(R.id.current_OP);
+
+        OPView.findViewById(R.id.content);
 
         Log.d("JSON", "FORMING REQUEST");
         Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
@@ -68,7 +75,7 @@ public class threadDetailFragment extends ListFragment {
 
 
 
-        JsonArrayRequest request = new JsonArrayRequest("http://serenity-valley.ddns.net:8001/getRepliesTo?parentID=" + Integer.toString(OP.messageID),
+        JsonArrayRequest request = new JsonArrayRequest(URLUtil.getRepliesTo(OP.messageID),
                 responseListener,
                 new Response.ErrorListener() {
                     @Override

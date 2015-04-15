@@ -31,12 +31,12 @@ public class Message {
 public class Message implements Parcelable {
 
 
-    public Integer messageID = null;
-    public int posterID;
-    public Integer parentID = null;
+    public Integer messageID = -1;
+    public int posterID = -1;
+    public Integer parentID = -1;
     public String content;
-    public Double lat = null;
-    public Double lon = null;
+    public Double lat = 1000.0;
+    public Double lon = 1000.0;
     public int numUpvotes = 0;
     public int numDownvotes = 0;
 
@@ -50,7 +50,6 @@ public class Message implements Parcelable {
         posterID = in.readInt();
         parentID = in.readInt();
         content = in.readString();
-
         lat = in.readDouble();
         lon = in.readDouble();
         numUpvotes = in.readInt();
