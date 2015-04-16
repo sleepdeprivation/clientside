@@ -1,17 +1,17 @@
 # clientside
 
-####Everything I thought was right was actually wrong
-Guess what! You don't need an API key to use google maps apparently.
+####Not quite everything I thought was right was actually wrong
+Guess what! You really do need an API key to use google maps...
 
-So here:
+But I've sent everyone a new one! Please don't push it to the repo...
+
+You might need this:
 
 ````bash
 git update-index --no-assume-unchanged app/src/main/AndroidManifest.xml
 ````
 
-will return the manifest file to pushing and pulling like normal
-
-Turns out none of it matters.
+it will return the manifest file to pushing and pulling like normal
 
 -_- ORZ
 
