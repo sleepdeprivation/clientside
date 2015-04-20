@@ -64,19 +64,21 @@ public class Settings extends ActionBarActivity{
 
         Log.d("SETTINGS", "saving settings");
 
-       String setting = ((EditText)findViewById(R.id.setting)).getText().toString();
+       String setting = ((EditText)findViewById(R.id.setting)).getText().toString(); // gets setting from view
 
         Log.d("SETTINGS", "Setting: " + setting);
 
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        SharedPreferences.Editor editor = settings.edit();
-        editor.putString("windowSize", setting);
+        //saves the setting
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0); // gets settings
+        SharedPreferences.Editor editor = settings.edit(); //gets editor
+        editor.putString("windowSize", setting); // edits the setting names "windowSize"
 
-        editor.apply();
+        editor.apply(); // commits the change to setting
 
-
-        SharedPreferences newSettings = getSharedPreferences(PREFS_NAME, 0);
-        String result = newSettings.getString("windowSize", "oops");
+        // retrieves setting, can be used anywhere (that has import statement).  for testing, can be removed.
+        // import atatement: import android.content.SharedPreferences;
+        SharedPreferences newSettings = getSharedPreferences(PREFS_NAME, 0); // gets settings
+        String result = newSettings.getString("windowSize", "string not found"); // gets string from settings named "windowSize"
         Log.d("SETTINGS", "newSetting: " + result);
     }
 
