@@ -56,6 +56,10 @@
             android:name=".activity.SubmitNewOp"
             android:label="@string/title_activity_submit_new_op" >
         </activity>
+        <activity
+            android:name=".activity.Settings"
+            android:label="@string/title_activity_settings" >
+        </activity>
     </application>
 
 </manifest>
