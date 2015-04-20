@@ -29,18 +29,55 @@ import groovycarnage.com.hermes.model.Message;
 import groovycarnage.com.hermes.utility.URLUtil;
 import groovycarnage.com.hermes.utility.VolleyQueue;
 
+import android.content.SharedPreferences;
 
 public class Settings extends ActionBarActivity{
 
+    public static final String PREFS_NAME = "MyPrefsFile";
+
     protected void onCreate(Bundle savedInstanceState) {
-        //Log.d("GPS_STUFF", "inside settings");
+
+        Log.d("SETTINGS", "inside settings create");
+        super.onCreate(savedInstanceState);
+
+        setContentView(R.layout.activity_settings);
 
     }
 
     public boolean onOptionsItemSelected(MenuItem item) {
-        //Log.d("GPS_STUFF", "inside settings");
-        return true;
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        Log.d("GPS_STUFF", "inside settings selected");
+
+        int id = item.getItemId();
+
+        //noinspection SimplifiableIfStatement
+        if (id == R.id.action_settings) {
+            return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
+    public void saveSettings(View v){
+
+        Log.d("SETTINGS", "saving settings");
+
+       String setting = ((EditText)findViewById(R.id.setting)).getText().toString();
+
+        Log.d("SETTINGS", "Setting: " + setting);
+
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("windowSize", setting);
+
+        editor.apply();
+
+
+        SharedPreferences newSettings = getSharedPreferences(PREFS_NAME, 0);
+        String result = newSettings.getString("windowSize", "oops");
+        Log.d("SETTINGS", "newSetting: " + result);
+    }
 
 }
