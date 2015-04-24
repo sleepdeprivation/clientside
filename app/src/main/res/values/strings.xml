@@ -14,5 +14,6 @@
     <string name="title_activity_submit_new_op">SubmitNewOp</string>
     <string name="action_new_op">create new message</string>
     <string name="submit">submit</string>
+    <string name="title_activity_settings">Settings</string>
 
 </resources>

@@ -2,8 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/app/app.iml" filepath="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/app/app.iml" />
-      <module fileurl="file://$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/volley/volley.iml" filepath="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/volley/volley.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file:///../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/app/app.iml" filepath="/../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/clientside.iml" filepath="$PROJECT_DIR$/clientside.iml" />
+      <module fileurl="file://$PROJECT_DIR$/volley/volley.iml" filepath="$PROJECT_DIR$/volley/volley.iml" />
+      <module fileurl="file:///../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/volley/volley.iml" filepath="/../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/volley/volley.iml" />
     </modules>
   </component>
 </project>

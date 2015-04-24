@@ -7,9 +7,9 @@
         <option name="externalProjectPath" value="$PROJECT_DIR$" />
         <option name="modules">
           <set>
-            <option value="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside" />
-            <option value="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/app" />
-            <option value="$PROJECT_DIR$/../../../../../../asdf/cburke/Desktop/cleanup/android-sdk-linux/cs370/clientside/volley" />
+            <option value="$PROJECT_DIR$" />
+            <option value="$PROJECT_DIR$/app" />
+            <option value="$PROJECT_DIR$/volley" />
           </set>
         </option>
       </GradleProjectSettings>
