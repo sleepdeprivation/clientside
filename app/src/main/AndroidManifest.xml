@@ -23,7 +23,7 @@
             android:value="@integer/google_play_services_version" />
         <meta-data
             android:name="com.google.android.maps.v2.API_KEY"
-            android:value="AIzaSyDiZK90TtWxBaZhGOHjpAye7vjtwfxyA4Y" />
+            android:value="xxx" />
 
         <activity
             android:name=".activity.main"
@@ -33,12 +33,6 @@
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
-        </activity>
-        <activity
-            android:name=".op_list_view"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/title_activity_op_list_view"
-            android:theme="@style/FullscreenTheme" >
         </activity>
         <activity
             android:name=".activity.threads.threadListActivity"

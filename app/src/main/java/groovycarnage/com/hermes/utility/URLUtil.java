@@ -11,7 +11,7 @@ import com.google.android.gms.maps.model.LatLng;
  */
 public class URLUtil {
     //public static final String BASEURL = "http://scary4cat.com:8003/";
-    public static final String BASEURL = "http://serenity-valley.ddns.net:8001/";
+    public static final String BASEURL = "http://serenity-valley.ddns.net:8003/";
     public static final String getPostsByRange(LatLng[] rect) {
         return
                 BASEURL + "getPostsByRange?" +
@@ -28,5 +28,8 @@ public class URLUtil {
 
     public static final String submitOP(){
         return BASEURL + "submit/newop";
+    }
+    public static final String submitReply(){
+        return BASEURL + "submit/newreply";
     }
 }

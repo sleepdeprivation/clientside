@@ -1,121 +1,232 @@
 package groovycarnage.com.hermes.activity.threads;
 
-import android.app.FragmentManager;
-import android.app.FragmentTransaction;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.FragmentActivity;
+import android.os.Parcelable;
+import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
+import android.view.View;
+import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ListView;
 
 
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.gson.GsonBuilder;
+
+import org.json.JSONArray;
 
 import groovycarnage.com.hermes.R;
+import groovycarnage.com.hermes.activity.SubmitNewOp;
 import groovycarnage.com.hermes.activity.main;
+import groovycarnage.com.hermes.adapters.headListAdapter;
 import groovycarnage.com.hermes.model.Message;
+import groovycarnage.com.hermes.utility.IDStrings;
+import groovycarnage.com.hermes.utility.SphericalUtilFunctions;
+import groovycarnage.com.hermes.utility.URLUtil;
+import groovycarnage.com.hermes.utility.VolleyQueue;
 
 /**
- * An activity representing a list of threads. This activity
- * has different presentations for handset and tablet-size devices. On
- * handsets, the activity presents a list of items, which when touched,
- * lead to a {@link threadDetailActivity} representing
- * item details. On tablets, the activity presents the list of items and
- * item details side-by-side using two vertical panes.
- * <p/>
- * The activity makes heavy use of fragments. The list of items is a
- * {@link threadListFragment} and the item details
- * (if present) is a {@link threadDetailFragment}.
- * <p/>
- * This activity also implements the required
- * {@link threadListFragment.Callbacks} interface
- * to listen for item selections.
+ *
  */
 public class threadListActivity extends ActionBarActivity
-        implements threadListFragment.Callbacks {
+            implements SwipeRefreshLayout.OnRefreshListener{
 
-    /**
-     * Whether or not the activity is in two-pane mode, i.e. running on a tablet
-     * device.
-     */
-    private boolean mTwoPane;
-    public static final String OP_ID = "OP_HEAD_MESSAGE";
-    private LatLng lastLocation;
+
+    LatLng lastLocation;
+    Message[] OPs;
+    double width;
+    double height;
+
+    ListView listView;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        Bundle b = getIntent().getExtras();
+        Bundle b = null;
+
+
+        if(savedInstanceState != null){
+            b = savedInstanceState;
+        }else if(getIntent() != null){
+            b = getIntent().getExtras();
+        }
 
         try {
-            lastLocation = new LatLng(b.getDouble(main.LATID),
-                    b.getDouble(main.LONGID));
-        }catch(NullPointerException e){
-            lastLocation = null;
+
+            lastLocation = new LatLng(  b.getDouble(IDStrings.LATID),
+                                        b.getDouble(IDStrings.LONGID));
+            width = b.getDouble(IDStrings.WIDTHID);
+            height = b.getDouble(IDStrings.HEIGHTID);
+
+            setContentView(R.layout.activity_thread_list);
+
+            ((SwipeRefreshLayout)findViewById(R.id.swipe_refresh_list)).setOnRefreshListener(this);
+/*
+            if (findViewById(R.id.thread_detail_container) != null) {
+                // The detail container view will be present only in the
+                // large-screen layouts (res/values-large and
+                // res/values-sw600dp). If this view is present, then the
+                // activity should be in two-pane mode.
+                mTwoPane = true;
+
+                // In two-pane mode, list items should be given the
+                // 'activated' state when touched.
+                f.setActivateOnItemClick(true);
+
+            }
+
+            f.location = lastLocation;
+
+            f.width = width;
+            f.height = height;
+
+*/
+
+            listView = (ListView) findViewById(R.id.thread_list);
+
+            listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+
+                @Override
+                public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                    Log.d("THREAD_LIST", "ITEM SELECTED");
+
+                    Message OP = (Message) parent.getItemAtPosition(position);
+
+                    startDetails(OP);
+
+                }
+            });
+
+            try {
+                Parcelable[] parcelables = b.getParcelableArray(IDStrings.OPLISTID);
+                OPs = new Message[parcelables.length];
+                System.arraycopy(parcelables, 0, OPs, 0, parcelables.length);
+                //f.OPs = OPs;
+                listView.setAdapter(new headListAdapter(getApplicationContext(), R.layout.activity_thread_list, OPs));
+            }catch(NullPointerException e){
+                requestMessages();
+            }
+
+        }catch(NullPointerException e){ //drop out to main
+            Intent i = new Intent(getApplicationContext(), main.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
         }
-
-        double width = b.getDouble(main.WIDTHID, 5);
-        double height = b.getDouble(main.HEIGHTID, 3.5);
-
-        Log.d("BUNDLER-THREADS", Double.toString(lastLocation.latitude));
-
-
-        setContentView(R.layout.activity_thread_list);
-
-        threadListFragment f = ((threadListFragment) getSupportFragmentManager()
-                .findFragmentById(R.id.thread_list));
-
-        if (findViewById(R.id.thread_detail_container) != null) {
-            // The detail container view will be present only in the
-            // large-screen layouts (res/values-large and
-            // res/values-sw600dp). If this view is present, then the
-            // activity should be in two-pane mode.
-            mTwoPane = true;
-
-            // In two-pane mode, list items should be given the
-            // 'activated' state when touched.
-            f.setActivateOnItemClick(true);
-
-        }
-
-        f.location = lastLocation;
-
-        f.width = width;
-        f.height = height;
-
-        f.requestMessages();
 
     }
 
-    /**
-     * Callback method from {@link threadListFragment.Callbacks}
-     * indicating that the item with the given ID was selected.
-     */
-    @Override
-    public void onItemSelected(Message OP) {
-        Log.d("FRAGMENT", "ITEM SELECTED");
-
+    public void startDetails(Message OP){
         Bundle arguments = new Bundle();
-        arguments.putParcelable(OP_ID, OP); //OP implements parcelable
+        arguments.putParcelable(IDStrings.OP_ID, OP);
+        OP.parentID = -1;
 
-        if (mTwoPane) {
-            // In two-pane mode, show the detail view in this activity by
-            // adding or replacing the detail fragment using a
-            // fragment transaction.
+        Intent detailIntent = new Intent(this, threadDetailActivity.class);
+        detailIntent.putExtras(arguments);
+        startActivity(detailIntent);
+    }
 
-            threadDetailFragment fragment = new threadDetailFragment();
-            fragment.setArguments(arguments);
 
-            getSupportFragmentManager().beginTransaction()
-                    .replace(R.id.thread_detail_container, fragment)
-                    .commit();
 
-        } else {
-            // In single-pane mode, simply start the detail activity
-            // for the selected item ID.
-            Intent detailIntent = new Intent(this, threadDetailActivity.class);
-            detailIntent.putExtras(arguments);
-            startActivity(detailIntent);
+    public void requestMessages() {
+
+        Log.d("BUNDLE width", Double.toString(width));
+        Log.d("BUNDLE height", Double.toString(height));
+
+        Log.d("JSON", "FORMING REQUEST");
+        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
+            @Override
+            public void onResponse(JSONArray response) {
+                Log.d("JSON", response.toString());
+                GsonBuilder gsonBuilder = new GsonBuilder();
+                OPs = gsonBuilder.create().fromJson(response.toString(), Message[].class);
+                listView.setAdapter(new headListAdapter(getApplicationContext(), R.layout.activity_thread_list, OPs));
+                ((SwipeRefreshLayout)findViewById(R.id.swipe_refresh_list)).setRefreshing(false);
+            }
+        };
+
+        Response.ErrorListener errorListener = new Response.ErrorListener() {
+            @Override
+            public void onErrorResponse(VolleyError error) {
+
+                Log.d("JSON", "JSON FAIL1");
+                Log.d("JSON", error.getMessage());
+            }
+        };
+
+        LatLng[] rect = SphericalUtilFunctions.getRect(height, width, lastLocation);
+
+        String url = URLUtil.getPostsByRange(rect);
+
+        Log.d("JSON", "Requesting resource from " + url);
+
+        JsonArrayRequest request = new JsonArrayRequest(url, responseListener, errorListener);
+
+        Log.d("JSON", "ADDING REQUEST TO QUEUE12");
+        VolleyQueue.getRequestQueue(getApplicationContext()).add(request);
+
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState){
+        if(OPs != null) {
+            savedInstanceState.putParcelableArray(IDStrings.OPLISTID, OPs);
         }
+        if(lastLocation != null) {
+            savedInstanceState.putDouble(IDStrings.LATID, lastLocation.latitude);
+            savedInstanceState.putDouble(IDStrings.LONGID, lastLocation.longitude);
+        }
+
+        savedInstanceState.putDouble(IDStrings.HEIGHTID, height);
+        savedInstanceState.putDouble(IDStrings.WIDTHID, width);
+
+        super.onSaveInstanceState(savedInstanceState);
+    }
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        MenuInflater inflater = getMenuInflater();
+        inflater.inflate(R.menu.menu_list, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // Handle action bar item clicks here. The action bar will
+        // automatically handle clicks on the Home/Up button, so long
+        // as you specify a parent activity in AndroidManifest.xml.
+        int id = item.getItemId();
+
+        if (id == R.id.action_settings) {
+            return true;
+        }else if(id == R.id.action_show_map){
+            Intent i = new Intent(getApplicationContext(), main.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
+
+        }else if(id == R.id.action_new_OP){
+            Intent i = new Intent(getApplicationContext(), SubmitNewOp.class);
+            i.putExtra("LATITUDE", lastLocation.latitude);
+            i.putExtra("LONGITUDE", lastLocation.longitude);
+            startActivity(i);
+        }
+
+        return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onRefresh() {
+        Log.d("SWIPEREFRESH", "REFRESHING! : )");
+        requestMessages();
     }
 }

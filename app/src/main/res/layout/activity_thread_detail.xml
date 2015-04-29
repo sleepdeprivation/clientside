@@ -8,13 +8,45 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         layout="@layout/op_list_item"
-        android:id="@+id/current_OP" />
+        android:id="@+id/current_OP"
+        android:layout_gravity="center_horizontal|top"
+        android:windowSoftInputMode="adjustResize"/>
 
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:id="@+id/thread_detail_container"
-    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:layout_width="fill_parent" android:layout_height="wrap_content"
     tools:context="groovycarnage.com.hermes.activity.threads.threadDetailActivity"
-    tools:ignore="MergeRootFrame" />
+    android:windowSoftInputMode="adjustResize"
+    tools:ignore="MergeRootFrame"
+        android:layout_weight="5" >
+
+    </FrameLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="0.99"
+        android:inputType="textShortMessage|textAutoCorrect|textCapSentences|textMultiLine"
+        android:minHeight="100dp">
+
+        <EditText
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:inputType="textPersonName"
+            android:ems="10"
+            android:id="@+id/reply_text"
+            android:layout_weight="5"
+            android:hint="Reply" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="fill_parent"
+            android:text="Submit"
+            android:id="@+id/sumbit_reply"
+            android:layout_weight="2"
+            android:onClick="submitReply" />
+    </LinearLayout>
 
 
 </LinearLayout>

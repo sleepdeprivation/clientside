@@ -2,11 +2,14 @@ package groovycarnage.com.hermes.activity.threads;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v4.app.NavUtils;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.MenuItem;
+import android.view.View;
 
 import groovycarnage.com.hermes.R;
+import groovycarnage.com.hermes.activity.main;
+import groovycarnage.com.hermes.utility.IDStrings;
 
 /**
  * An activity representing a single thread detail screen. This
@@ -19,7 +22,7 @@ import groovycarnage.com.hermes.R;
  */
 public class threadDetailActivity extends ActionBarActivity {
 
-    public static String FRAGMENT_ID = "FRAGMENT DETAIL";
+    public threadDetailFragment myFragment;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -44,20 +47,21 @@ public class threadDetailActivity extends ActionBarActivity {
             Bundle arguments = new Bundle();
 
 
-            arguments.putParcelable( threadListActivity.OP_ID,
-                    getIntent().getExtras().getParcelable(threadListActivity.OP_ID));
+            arguments.putParcelable( IDStrings.OP_ID,
+                    getIntent().getExtras().getParcelable(IDStrings.OP_ID));
 
             arguments.putString(threadDetailFragment.ARG_ITEM_ID,
                     getIntent().getStringExtra(threadDetailFragment.ARG_ITEM_ID));
             threadDetailFragment fragment = new threadDetailFragment();
             fragment.setArguments(arguments);
+            myFragment = fragment;
             getSupportFragmentManager().beginTransaction()
                     .add(R.id.thread_detail_container, fragment)
                     .commit();
         }
-
-
     }
+
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -70,9 +74,23 @@ public class threadDetailActivity extends ActionBarActivity {
             //
             // http://developer.android.com/design/patterns/navigation.html#up-vs-back
             //
-            NavUtils.navigateUpTo(this, new Intent(this, threadListActivity.class));
+            Intent i = new Intent(getApplicationContext(), main.class);
+            i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(i);
             return true;
         }
         return super.onOptionsItemSelected(item);
     }
+
+    /*
+      The user wants to reply to this message
+   */
+    public void submitReply(View view) {
+        Log.d("SUBMIT REPLY" , "ACTIVITY");
+        myFragment.submitReply(view);
+        Intent i = new Intent(getApplicationContext(), main.class);
+        i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        startActivity(i);
+    }
+
 }

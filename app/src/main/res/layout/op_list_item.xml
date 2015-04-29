@@ -14,16 +14,8 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="wrap_content"
-        android:layout_height="fill_parent">
-
-        <TextView
-            android:layout_width="wrap_content"
-
-            android:layout_height="fill_parent"
-            android:textAppearance="?android:attr/textAppearanceLarge"
-            android:id="@+id/poster"
-            android:layout_weight="1"
-            android:textColor="#000000" />
+        android:layout_height="fill_parent"
+        android:layout_gravity="right">
 
         <LinearLayout
             android:orientation="vertical"

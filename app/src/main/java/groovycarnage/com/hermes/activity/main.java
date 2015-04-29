@@ -2,8 +2,7 @@ package groovycarnage.com.hermes.activity;
 
 import android.content.Intent;
 import android.location.Location;
-import android.os.AsyncTask;
-import android.support.annotation.NonNull;
+import android.os.Parcelable;
 import android.support.v7.app.ActionBarActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -28,16 +27,12 @@ import org.json.JSONArray;
 
 import java.util.Observable;
 import java.util.Observer;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Condition;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReentrantLock;
 
 import groovycarnage.com.hermes.R;
 import groovycarnage.com.hermes.activity.threads.threadListActivity;
 import groovycarnage.com.hermes.model.Message;
 import groovycarnage.com.hermes.utility.GPSListener;
+import groovycarnage.com.hermes.utility.IDStrings;
 import groovycarnage.com.hermes.utility.SphericalUtilFunctions;
 import groovycarnage.com.hermes.utility.URLUtil;
 import groovycarnage.com.hermes.utility.VolleyQueue;
@@ -53,20 +48,36 @@ public class main extends ActionBarActivity
     public GoogleMap map = null;
     public LatLng lastLocation = null;
     public GPSListener gpsListener;
-    public Message[] OPs = null;
+    public Message[] OPs;
     public double boxHeight = 5;
     public double boxWidth = 3.5;
-
-    public static String WIDTHID = "BOXW";
-    public static String HEIGHTID = "BOXH";
-    public static String LONGID = "LONGITUDE";
-    public static String LATID = "LATITUDE";
 
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 
         Log.d("LIFECYCLE", "CREATE");
+
+        if(savedInstanceState != null) {
+
+            boxHeight = savedInstanceState.getDouble(IDStrings.HEIGHTID, boxHeight);
+            boxWidth = savedInstanceState.getDouble(IDStrings.WIDTHID, boxWidth);
+            try {
+                lastLocation = new LatLng(savedInstanceState.getDouble(IDStrings.LATID),
+                        savedInstanceState.getDouble(IDStrings.LONGID));
+            } catch (NullPointerException e) {
+                lastLocation = null;
+            }
+            try {
+                Parcelable[] parcelables = savedInstanceState.getParcelableArray(IDStrings.OPLISTID);
+                OPs = new Message[parcelables.length];
+                System.arraycopy(parcelables, 0, OPs, 0, parcelables.length);
+            } catch (NullPointerException e) {
+                Log.d("EXCEPTION GET", "OP was null . . . ");
+                OPs = null;
+            }
+        }
+
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
@@ -76,35 +87,37 @@ public class main extends ActionBarActivity
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState) {
         if(OPs != null) {
-            savedInstanceState.putParcelableArray("OPs", OPs);
+            savedInstanceState.putParcelableArray(IDStrings.OPLISTID, OPs);
+        }
+        if(lastLocation != null) {
+            savedInstanceState.putDouble(IDStrings.LATID, lastLocation.latitude);
+            savedInstanceState.putDouble(IDStrings.LONGID, lastLocation.longitude);
         }
 
-        savedInstanceState.putDouble("boxHeight", 5);
-        savedInstanceState.putDouble("boxWidth", 3.5);
-        if(lastLocation != null) {
-            savedInstanceState.putDouble("LATITUDE", lastLocation.latitude);
-            savedInstanceState.putDouble("LONGITUDE", lastLocation.longitude);
-        }
+        savedInstanceState.putDouble(IDStrings.HEIGHTID, boxHeight);
+        savedInstanceState.putDouble(IDStrings.WIDTHID, boxWidth);
+
 
         super.onSaveInstanceState(savedInstanceState);
     }
 
     @Override
-    protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        boxHeight = savedInstanceState.getDouble("boxHeight", 5);
-        boxWidth = savedInstanceState.getDouble("boxWidth", 3.5);
+    public void onRestoreInstanceState(Bundle savedInstanceState){
+        boxHeight = savedInstanceState.getDouble(IDStrings.HEIGHTID, boxHeight);
+        boxWidth = savedInstanceState.getDouble(IDStrings.WIDTHID, boxWidth);
         try {
-            lastLocation = new LatLng(savedInstanceState.getDouble("LATITUDE"),
-                    savedInstanceState.getDouble("LONGITUDE"));
+            lastLocation = new LatLng(savedInstanceState.getDouble(IDStrings.LATID),
+                    savedInstanceState.getDouble(IDStrings.LONGID));
         }catch(NullPointerException e){
             lastLocation = null;
         }
         try {
-            OPs = ((Message[]) savedInstanceState.getParcelableArray("OPs"));
+            Parcelable[] parcelables = savedInstanceState.getParcelableArray(IDStrings.OPLISTID);
+            OPs = new Message[parcelables.length];
+            System.arraycopy(parcelables, 0, OPs, 0, parcelables.length);
         }catch(NullPointerException e){
             OPs = null;
         }
-
         super.onRestoreInstanceState(savedInstanceState);
     }
 
@@ -181,7 +194,6 @@ public class main extends ActionBarActivity
 
     }
 
-
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -197,19 +209,24 @@ public class main extends ActionBarActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
+            Intent i = new Intent(getApplicationContext(), Settings.class);
+            startActivity(i);
             return true;
         }else if(id == R.id.action_show_list) {
             Intent i = new Intent(getApplicationContext(), threadListActivity.class);
-            i.putExtra(LATID, lastLocation.latitude);
-            i.putExtra(LONGID, lastLocation.longitude);
-            i.putExtra(WIDTHID, boxWidth);
-            i.putExtra(HEIGHTID, boxHeight);
+            /*we might need these to view the list*/
+            i.putExtra(IDStrings.LATID, lastLocation.latitude);
+            i.putExtra(IDStrings.LONGID, lastLocation.longitude);
+            i.putExtra(IDStrings.WIDTHID, boxWidth);
+            i.putExtra(IDStrings.HEIGHTID, boxHeight);
+            i.putExtra(IDStrings.OPLISTID, OPs);
             startActivity(i);
         }else if(id == R.id.action_new_OP) {
             if(lastLocation != null) {
                 Intent i = new Intent(getApplicationContext(), SubmitNewOp.class);
-                i.putExtra("LATITUDE", lastLocation.latitude);
-                i.putExtra("LONGITUDE", lastLocation.longitude);
+                /*we might need these to post a post*/
+                i.putExtra(IDStrings.LATID, lastLocation.latitude);
+                i.putExtra(IDStrings.LONGID, lastLocation.longitude);
                 startActivity(i);
             }
         }
@@ -221,7 +238,8 @@ public class main extends ActionBarActivity
     public void onMapReady(GoogleMap googleMap) {
         map = googleMap;
         map.setMyLocationEnabled(true);
-        tryUI();
+        lastLocation = new LatLng(38.340, -122.676);
+        requestOps();
     }
 
     public void receiveLocation(Location location){
@@ -247,37 +265,47 @@ public class main extends ActionBarActivity
         mapFragment.getMapAsync(this);
     }
 
+
+    boolean opsRequested = false;
+
     public void requestOps(){
-        Log.d("JSON", "FORMING REQUEST");
-        Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
-            @Override
-            public void onResponse(JSONArray response) {
-                Log.d("JSON", response.toString());
-                GsonBuilder gsonBuilder = new GsonBuilder();
-                OPs = gsonBuilder.create().fromJson(response.toString(), Message[].class);
-                Log.d("JSON", OPs[0].toString());
-                tryUI();
-            }
-        };
-        Response.ErrorListener errorListener = new Response.ErrorListener() {
-            @Override
-            public void onErrorResponse(VolleyError error) {
 
-                Log.d("JSON", "JSON FAIL1");
-                Log.d("JSON", error.getMessage());
-            }
-        };
+        synchronized (this) {
 
-        LatLng[] rect = SphericalUtilFunctions.getRect(boxHeight, boxWidth, lastLocation);
+            if(opsRequested)   return;
+            else        opsRequested = true;
 
-        String url = URLUtil.getPostsByRange(rect);
+            Log.d("JSON", "FORMING REQUEST");
+            Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
+                @Override
+                public void onResponse(JSONArray response) {
+                    Log.d("JSON", response.toString());
+                    GsonBuilder gsonBuilder = new GsonBuilder();
+                    OPs = gsonBuilder.create().fromJson(response.toString(), Message[].class);
+                    tryUI();
+                    opsRequested = false;
+                }
+            };
+            Response.ErrorListener errorListener = new Response.ErrorListener() {
+                @Override
+                public void onErrorResponse(VolleyError error) {
 
-        Log.d("JSON", "Main requesting resource from " + url);
+                    Log.d("JSON", "JSON FAIL1");
+                    Log.d("JSON", error.getMessage());
+                }
+            };
 
-        JsonArrayRequest request = new JsonArrayRequest(url, responseListener, errorListener);
+            LatLng[] rect = SphericalUtilFunctions.getRect(boxHeight, boxWidth, lastLocation);
 
-        Log.d("JSON", "ADDING REQUEST TO QUEUE1");
-        VolleyQueue.getRequestQueue(getApplicationContext()).add(request);
+            String url = URLUtil.getPostsByRange(rect);
+
+            Log.d("JSON", "Main requesting resource from " + url);
+
+            JsonArrayRequest request = new JsonArrayRequest(url, responseListener, errorListener);
+
+            Log.d("JSON", "ADDING REQUEST TO QUEUE1");
+            VolleyQueue.getRequestQueue(getApplicationContext()).add(request);
+        }
 
     }
 
@@ -311,7 +339,6 @@ public class main extends ActionBarActivity
 
         // Get back the mutable Polygon
         Polygon polygon = map.addPolygon(rectOptions);
-
 
     }
 

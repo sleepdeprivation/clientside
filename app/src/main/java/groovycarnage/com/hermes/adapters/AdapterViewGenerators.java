@@ -1,11 +1,16 @@
 package groovycarnage.com.hermes.adapters;
 
 import android.content.Context;
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.TextView;
+
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.DecimalFormat;
 
 import groovycarnage.com.hermes.R;
 import groovycarnage.com.hermes.model.Message;
@@ -34,14 +39,22 @@ public class AdapterViewGenerators {
             itemView = convertView;
         }
         TextView content = (TextView) itemView.findViewById(R.id.content);
-        TextView poster = (TextView) itemView.findViewById(R.id.poster);
         TextView latitude = (TextView) itemView.findViewById(R.id.lat);
         TextView longitude = (TextView) itemView.findViewById(R.id.lon);
 
         content.setText(message.content);
-        poster.setText("username here");
-        latitude.setText(Double.toString(message.lat));
-        longitude.setText(Double.toString(message.lon));
+
+        double outLat = new BigDecimal(message.lat).setScale(3, RoundingMode.HALF_UP).doubleValue();
+        double outLon = new BigDecimal(message.lon).setScale(3, RoundingMode.HALF_UP).doubleValue();
+
+        latitude.setText(Double.toString(outLat));
+        longitude.setText(Double.toString(outLon));
+
+        if(position % 2 == 0){
+            itemView.setBackgroundColor(Color.parseColor("#d3d3d3"));
+        }else{
+            itemView.setBackgroundColor(Color.parseColor("#f6f6f6"));
+        }
 
         return itemView;
     }
@@ -60,10 +73,15 @@ public class AdapterViewGenerators {
             itemView = convertView;
         }
         TextView content = (TextView) itemView.findViewById(R.id.content);
-        TextView poster = (TextView) itemView.findViewById(R.id.poster);
 
         content.setText(message.content);
-        poster.setText("reply username here");
+
+
+        if(position % 2 == 0){
+            itemView.setBackgroundColor(Color.parseColor("#d3d3d3"));
+        }else{
+            itemView.setBackgroundColor(Color.parseColor("#f6f6f6"));
+        }
 
         return itemView;
     }

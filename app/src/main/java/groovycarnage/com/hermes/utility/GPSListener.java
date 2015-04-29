@@ -72,8 +72,8 @@ public final class GPSListener extends Observable
     private void createLocationRequest(){
         Log.d("GPS_STUFF", "ATTEMPTING CONNECTION");
         mLocationRequest = new LocationRequest();
-        mLocationRequest.setInterval(10000);
-        mLocationRequest.setFastestInterval(5000);
+        mLocationRequest.setInterval(500);
+        mLocationRequest.setFastestInterval(300);
         mLocationRequest.setPriority(LocationRequest.PRIORITY_BALANCED_POWER_ACCURACY);
 
     }
