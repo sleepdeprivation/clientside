@@ -90,9 +90,6 @@ public class main extends ActionBarActivity
             savedInstanceState.putParcelableArray(IDStrings.OPLISTID, OPs);
         }
 
-        savedInstanceState.putDouble("boxHeight", boxHeight);
-        savedInstanceState.putDouble("boxWidth", boxWidth);
-
         if(lastLocation != null) {
             savedInstanceState.putDouble(IDStrings.LATID, lastLocation.latitude);
             savedInstanceState.putDouble(IDStrings.LONGID, lastLocation.longitude);
