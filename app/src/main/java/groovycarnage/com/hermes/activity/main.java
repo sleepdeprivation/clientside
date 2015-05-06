@@ -9,6 +9,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.content.SharedPreferences;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -41,7 +42,6 @@ import groovycarnage.com.hermes.utility.GPSListener;
 import groovycarnage.com.hermes.utility.SphericalUtilFunctions;
 import groovycarnage.com.hermes.utility.URLUtil;
 import groovycarnage.com.hermes.utility.VolleyQueue;
-
 
 public class main extends ActionBarActivity
                         implements
@@ -79,8 +79,8 @@ public class main extends ActionBarActivity
             savedInstanceState.putParcelableArray("OPs", OPs);
         }
 
-        savedInstanceState.putDouble("boxHeight", 5);
-        savedInstanceState.putDouble("boxWidth", 3.5);
+        savedInstanceState.putDouble("boxHeight", boxHeight);
+        savedInstanceState.putDouble("boxWidth", boxWidth);
         if(lastLocation != null) {
             savedInstanceState.putDouble("LATITUDE", lastLocation.latitude);
             savedInstanceState.putDouble("LONGITUDE", lastLocation.longitude);
@@ -91,8 +91,8 @@ public class main extends ActionBarActivity
 
     @Override
     protected void onRestoreInstanceState(Bundle savedInstanceState) {
-        boxHeight = savedInstanceState.getDouble("boxHeight", 5);
-        boxWidth = savedInstanceState.getDouble("boxWidth", 3.5);
+        boxHeight = savedInstanceState.getDouble("boxHeight", boxHeight);
+        boxWidth = savedInstanceState.getDouble("boxWidth", boxWidth);
         try {
             lastLocation = new LatLng(savedInstanceState.getDouble("LATITUDE"),
                     savedInstanceState.getDouble("LONGITUDE"));
@@ -197,7 +197,8 @@ public class main extends ActionBarActivity
         int id = item.getItemId();
 
         if (id == R.id.action_settings) {
-            return true;
+            Intent i = new Intent(getApplicationContext(), Settings.class);
+            startActivity(i);
         }else if(id == R.id.action_show_list) {
             Intent i = new Intent(getApplicationContext(), threadListActivity.class);
             i.putExtra(LATID, lastLocation.latitude);
@@ -293,6 +294,11 @@ public class main extends ActionBarActivity
         map.addMarker(new MarkerOptions()
                 .position(me)
                 .title("You"));
+
+        SharedPreferences newSettings = getSharedPreferences("MyPrefsFile", 0); // gets settings
+        double result = newSettings.getFloat("windowSizeFloat", 5); // gets double from settings named "windowSize"
+        boxHeight = result;
+        boxWidth = result * 0.7;
 
         // Create a LatLngBounds that specifies the bounds of the window.
         LatLng rect[] = SphericalUtilFunctions.getRect(boxHeight, boxWidth, me);
