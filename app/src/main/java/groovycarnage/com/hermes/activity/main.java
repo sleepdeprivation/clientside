@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.content.SharedPreferences;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -36,7 +37,6 @@ import groovycarnage.com.hermes.utility.IDStrings;
 import groovycarnage.com.hermes.utility.SphericalUtilFunctions;
 import groovycarnage.com.hermes.utility.URLUtil;
 import groovycarnage.com.hermes.utility.VolleyQueue;
-
 
 public class main extends ActionBarActivity
                         implements
@@ -89,6 +89,10 @@ public class main extends ActionBarActivity
         if(OPs != null) {
             savedInstanceState.putParcelableArray(IDStrings.OPLISTID, OPs);
         }
+
+        savedInstanceState.putDouble("boxHeight", boxHeight);
+        savedInstanceState.putDouble("boxWidth", boxWidth);
+
         if(lastLocation != null) {
             savedInstanceState.putDouble(IDStrings.LATID, lastLocation.latitude);
             savedInstanceState.putDouble(IDStrings.LONGID, lastLocation.longitude);
@@ -105,6 +109,7 @@ public class main extends ActionBarActivity
     public void onRestoreInstanceState(Bundle savedInstanceState){
         boxHeight = savedInstanceState.getDouble(IDStrings.HEIGHTID, boxHeight);
         boxWidth = savedInstanceState.getDouble(IDStrings.WIDTHID, boxWidth);
+
         try {
             lastLocation = new LatLng(savedInstanceState.getDouble(IDStrings.LATID),
                     savedInstanceState.getDouble(IDStrings.LONGID));
@@ -211,7 +216,7 @@ public class main extends ActionBarActivity
         if (id == R.id.action_settings) {
             Intent i = new Intent(getApplicationContext(), Settings.class);
             startActivity(i);
-            return true;
+
         }else if(id == R.id.action_show_list) {
             Intent i = new Intent(getApplicationContext(), threadListActivity.class);
             /*we might need these to view the list*/
@@ -321,6 +326,11 @@ public class main extends ActionBarActivity
         map.addMarker(new MarkerOptions()
                 .position(me)
                 .title("You"));
+
+        SharedPreferences newSettings = getSharedPreferences("MyPrefsFile", 0); // gets settings
+        double result = newSettings.getFloat("windowSizeFloat", 5); // gets double from settings named "windowSize"
+        boxHeight = result;
+        boxWidth = result * 0.7;
 
         // Create a LatLngBounds that specifies the bounds of the window.
         LatLng rect[] = SphericalUtilFunctions.getRect(boxHeight, boxWidth, me);
