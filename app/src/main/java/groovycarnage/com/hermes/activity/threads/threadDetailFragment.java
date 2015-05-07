@@ -6,7 +6,8 @@ import android.os.Bundle;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.util.Log;
         import android.view.View;
-        import android.widget.EditText;
+import android.widget.AdapterView;
+import android.widget.EditText;
         import android.widget.TextView;
 
 import com.android.volley.Response;
@@ -20,8 +21,13 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
 import groovycarnage.com.hermes.R;
-        import groovycarnage.com.hermes.adapters.replyListAdapter;
+import groovycarnage.com.hermes.adapters.AdapterViewGenerators;
+import groovycarnage.com.hermes.adapters.replyListAdapter;
 import groovycarnage.com.hermes.model.Message;
 import groovycarnage.com.hermes.utility.IDStrings;
 import groovycarnage.com.hermes.utility.URLUtil;
@@ -62,13 +68,7 @@ public class threadDetailFragment extends ListFragment {
 
         View itemView = this.getActivity().findViewById(R.id.current_OP);
 
-        TextView content = (TextView) itemView.findViewById(R.id.content);
-        TextView latitude = (TextView) itemView.findViewById(R.id.lat);
-        TextView longitude = (TextView) itemView.findViewById(R.id.lon);
-
-        content.setText(OP.content);
-        latitude.setText(Double.toString(OP.lat));
-        longitude.setText(Double.toString(OP.lon));
+        AdapterViewGenerators.populate(itemView, OP);
 
         Log.d("JSON", "FORMING REQUEST");
         Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
@@ -115,6 +115,7 @@ public class threadDetailFragment extends ListFragment {
         m.messageID = null;
         m.lat = null;
         m.lon = null;
+        m.timePosted = null;
 
         try {
 

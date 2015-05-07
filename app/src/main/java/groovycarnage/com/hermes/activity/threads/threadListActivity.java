@@ -20,8 +20,14 @@ import com.android.volley.VolleyError;
 import com.android.volley.toolbox.JsonArrayRequest;
 import com.google.android.gms.maps.model.LatLng;
 import com.google.gson.GsonBuilder;
+import com.google.gson.internal.bind.DateTypeAdapter;
 
 import org.json.JSONArray;
+
+import java.sql.Timestamp;
+import java.text.ParsePosition;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import groovycarnage.com.hermes.R;
 import groovycarnage.com.hermes.activity.SubmitNewOp;
@@ -55,8 +61,10 @@ public class threadListActivity extends ActionBarActivity
 
 
         if(savedInstanceState != null){
+            Log.d("BUNDLE!", "savedInstance");
             b = savedInstanceState;
         }else if(getIntent() != null){
+            Log.d("BUNDLE!", "other");
             b = getIntent().getExtras();
         }
 
@@ -117,6 +125,7 @@ public class threadListActivity extends ActionBarActivity
             }
 
         }catch(NullPointerException e){ //drop out to main
+            Log.d("EXCEPTION_GET", "EXCEPTION!!!!!!!!!!");
             Intent i = new Intent(getApplicationContext(), main.class);
             i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             startActivity(i);
@@ -177,6 +186,11 @@ public class threadListActivity extends ActionBarActivity
 
     @Override
     public void onSaveInstanceState(Bundle savedInstanceState){
+
+        Log.d("BUNDLE!", "bundling!");
+
+        super.onSaveInstanceState(savedInstanceState);
+
         if(OPs != null) {
             savedInstanceState.putParcelableArray(IDStrings.OPLISTID, OPs);
         }
@@ -187,8 +201,6 @@ public class threadListActivity extends ActionBarActivity
 
         savedInstanceState.putDouble(IDStrings.HEIGHTID, height);
         savedInstanceState.putDouble(IDStrings.WIDTHID, width);
-
-        super.onSaveInstanceState(savedInstanceState);
     }
 
 

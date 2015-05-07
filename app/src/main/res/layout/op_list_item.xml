@@ -4,24 +4,45 @@
     android:layout_height="match_parent"
     android:id="@+id/messageListItemView">
 
-    <TextView
-        android:layout_width="fill_parent"
-        android:layout_height="50dp"
-        android:textAppearance="?android:attr/textAppearanceLarge"
-        android:id="@+id/content"
-        android:textColor="#000000" />
-
     <LinearLayout
         android:orientation="horizontal"
-        android:layout_width="wrap_content"
-        android:layout_height="fill_parent"
-        android:layout_gravity="right">
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="right"
+        android:id="@+id/infobar"
+        android:layout_weight="3">
 
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="wrap_content"
-            android:layout_height="fill_parent"
-            android:layout_weight=".2"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
+            android:gravity="start">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/timestamp"
+                android:textColor="#000000"
+                android:textSize="10dp"
+                android:typeface="monospace" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:id="@+id/username"
+                android:textColor="#000000"
+                android:textSize="14dp"
+                android:typeface="sans" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="vertical"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="3"
             android:layout_gravity="right">
 
             <TextView
@@ -30,7 +51,9 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:id="@+id/lat"
                 android:textColor="#000000"
-                android:layout_gravity="right" />
+                android:layout_gravity="right"
+                android:typeface="monospace"
+                android:textSize="12dp" />
 
             <TextView
                 android:layout_width="wrap_content"
@@ -38,9 +61,19 @@
                 android:textAppearance="?android:attr/textAppearanceLarge"
                 android:id="@+id/lon"
                 android:textColor="#000000"
-                android:layout_gravity="right" />
+                android:layout_gravity="right"
+                android:typeface="monospace"
+                android:textSize="12dp" />
         </LinearLayout>
 
     </LinearLayout>
+
+    <TextView
+        android:layout_width="fill_parent"
+        android:layout_height="50dp"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:id="@+id/content"
+        android:textColor="#000000"
+        android:background="#ffffffff" />
 
 </LinearLayout>

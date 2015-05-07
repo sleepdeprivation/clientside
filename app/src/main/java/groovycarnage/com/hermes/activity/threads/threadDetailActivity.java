@@ -1,6 +1,7 @@
 package groovycarnage.com.hermes.activity.threads;
 
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.util.Log;
@@ -88,9 +89,13 @@ public class threadDetailActivity extends ActionBarActivity {
     public void submitReply(View view) {
         Log.d("SUBMIT REPLY" , "ACTIVITY");
         myFragment.submitReply(view);
-        Intent i = new Intent(getApplicationContext(), main.class);
+        finish();
+        /*
+        Intent i = new Intent(getApplicationContext(), threadListActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
+        */
     }
+
 
 }

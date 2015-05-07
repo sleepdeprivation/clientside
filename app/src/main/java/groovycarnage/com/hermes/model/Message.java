@@ -33,12 +33,14 @@ public class Message implements Parcelable {
 
     public Integer messageID = -1;
     public int posterID = -1;
+    public String uname = "anon";
     public Integer parentID = -1;
     public String content;
     public Double lat = 1000.0;
     public Double lon = 1000.0;
     public int numUpvotes = 0;
     public int numDownvotes = 0;
+    public String timePosted = "";
 
     public Message(){
 
@@ -54,6 +56,8 @@ public class Message implements Parcelable {
         lon = in.readDouble();
         numUpvotes = in.readInt();
         numDownvotes = in.readInt();
+        timePosted = in.readString();
+        uname = in.readString();
     }
 
     @Override
@@ -71,6 +75,8 @@ public class Message implements Parcelable {
         dest.writeDouble(lon);
         dest.writeInt(numUpvotes);
         dest.writeInt(numDownvotes);
+        dest.writeString(timePosted);
+        dest.writeString(uname);
     }
 
     @SuppressWarnings("unused")

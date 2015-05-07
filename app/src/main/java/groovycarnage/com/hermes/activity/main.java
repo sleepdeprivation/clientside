@@ -49,8 +49,8 @@ public class main extends ActionBarActivity
     public LatLng lastLocation = null;
     public GPSListener gpsListener;
     public Message[] OPs;
-    public double boxHeight = 5;
-    public double boxWidth = 3.5;
+    public double boxHeight = 3;
+    public double boxWidth = 3;
 
 
     @Override
@@ -240,6 +240,7 @@ public class main extends ActionBarActivity
         map.setMyLocationEnabled(true);
         lastLocation = new LatLng(38.340, -122.676);
         requestOps();
+        tryUI();
     }
 
     public void receiveLocation(Location location){
@@ -348,6 +349,7 @@ public class main extends ActionBarActivity
         Log.d("GPS_STUFF", "observed");
         if(observable.getClass() == gpsListener.getClass()) {
             receiveLocation((Location) data);
+            tryUI();
         }
     }
 }
