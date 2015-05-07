@@ -10,35 +10,37 @@
         android:layout_height="wrap_content">
 
         <TextView
-            android:layout_width="156dp"
-            android:layout_height="69dp"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
             android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Max distance you can see messages from"
+            android:text="Viewing box dimension"
             android:id="@+id/textView"
-            android:layout_weight="0.18"
+            android:layout_weight="3"
             android:layout_gravity="left"
             android:autoText="false"
             android:editable="false"
             android:enabled="false"
             android:gravity="left"
-            android:textColor="#ff000000" />
+            android:textColor="#ff000000"
+            android:typeface="normal"
+            android:textSize="18dp" />
 
         <EditText
-            android:layout_width="176dp"
-            android:layout_height="68dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
             android:id="@+id/setting"
             android:password="false"
             android:singleLine="false"
             android:editable="true"
             android:inputType="numberDecimal"
-            android:layout_weight="0.14" />
+            android:layout_weight="4" />
 
     </LinearLayout>
 
     <Button
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="@string/submit"
+        android:text="@string/set"
         android:id="@+id/button2"
         android:layout_gravity="right"
         android:onClick="saveSettings" />

@@ -64,8 +64,12 @@ public class AdapterViewGenerators {
         TextView timestamp = (TextView) itemView.findViewById(R.id.timestamp);
         TextView username = (TextView) itemView.findViewById(R.id.username);
 
-        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSS'Z'");
-        Date d = f.parse(message.timePosted, new ParsePosition(0));
+        //example
+        //"2015-04-23T23:41:22.000Z
+        SimpleDateFormat f = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
+        ParsePosition p = new ParsePosition(0);
+        Date d = f.parse(message.timePosted.replaceAll("Z$", "+0000"), p);
+
 
         timestamp.setText(d.toString());
         username.setText(message.uname);
@@ -79,10 +83,16 @@ public class AdapterViewGenerators {
 
             latitude.setText(Double.toString(outLat));
             longitude.setText(Double.toString(outLon));
+
+            itemView.setPadding(0, 0, 0, 0);
+        }else{
+            itemView.setPadding(10, 0, 0, 0);
+            latitude.setText("");
+            longitude.setText("");
         }
 
         View bar = itemView.findViewById(R.id.infobar);
-        bar.setBackgroundColor(generateColor());
+        bar.setBackgroundColor(findColor(d.getSeconds()));
     }
 
     /*
@@ -100,7 +110,6 @@ public class AdapterViewGenerators {
         }
 
         populate(itemView, message);
-        itemView.setPadding(10, 0, 0, 0);
         /*
         if(position % 2 == 0){
             itemView.setBackgroundColor(Color.parseColor("#d3d3d3"));
@@ -118,6 +127,10 @@ public class AdapterViewGenerators {
         int g = random.nextInt(255);
         int b = random.nextInt(255);
         return Color.rgb((r+255)/2, (g+255)/2, (b+255/2));
+    }
+
+    public static int findColor(int n){
+        return Color.rgb((n*6)%128 + 128, (n*2)%128 + 128, (n*3)%128) + 128;
     }
 
 

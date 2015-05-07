@@ -89,12 +89,12 @@ public class threadDetailActivity extends ActionBarActivity {
     public void submitReply(View view) {
         Log.d("SUBMIT REPLY" , "ACTIVITY");
         myFragment.submitReply(view);
-        finish();
-        /*
+        //finish();
+
         Intent i = new Intent(getApplicationContext(), threadListActivity.class);
         i.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         startActivity(i);
-        */
+
     }
 
 

@@ -4,11 +4,29 @@
     tools:context=".main"
     android:orientation="vertical">
 
-    <fragment
+    <RelativeLayout
         android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:name="com.google.android.gms.maps.MapFragment"
-        android:id="@+id/map_display"
-        android:layout_weight="8" />
+        android:layout_height="fill_parent">
+
+        <fragment
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:name="com.google.android.gms.maps.MapFragment"
+            android:id="@+id/map_display"
+            android:layout_weight="8" />
+
+        <FrameLayout
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/loading">
+
+            <ProgressBar
+                style="?android:attr/progressBarStyleLarge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/progressBar"
+                android:layout_gravity="center" />
+        </FrameLayout>
+    </RelativeLayout>
 
 </LinearLayout>

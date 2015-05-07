@@ -9,6 +9,8 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.content.SharedPreferences;
+import android.view.View;
+import android.view.ViewGroup;
 
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
@@ -81,6 +83,10 @@ public class main extends ActionBarActivity
 
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+        findViewById(R.id.map_display).setVisibility(View.INVISIBLE);
     }
 
 //causes exceptions :(
@@ -175,6 +181,9 @@ public class main extends ActionBarActivity
         if(lastLocation != null){
             if(OPs != null){
                 if(map != null){
+                    //((ViewGroup) findViewById(R.id.loading).getParent()).removeView(findViewById(R.id.loading));
+                    findViewById(R.id.map_display).setVisibility(View.VISIBLE);
+                    findViewById(R.id.loading).setVisibility(View.INVISIBLE);
                     formatMap(lastLocation);
                     makeMarkers();
                 }
@@ -328,7 +337,7 @@ public class main extends ActionBarActivity
         SharedPreferences newSettings = getSharedPreferences("MyPrefsFile", 0); // gets settings
         double result = newSettings.getFloat("windowSizeFloat", 5); // gets double from settings named "windowSize"
         boxHeight = result;
-        boxWidth = result * 0.7;
+        boxWidth = result;// * 0.7;
 
         // Create a LatLngBounds that specifies the bounds of the window.
         LatLng rect[] = SphericalUtilFunctions.getRect(boxHeight, boxWidth, me);

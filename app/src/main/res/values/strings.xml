@@ -15,5 +15,6 @@
     <string name="action_new_op">create new message</string>
     <string name="submit">submit</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="set">set</string>
 
 </resources>

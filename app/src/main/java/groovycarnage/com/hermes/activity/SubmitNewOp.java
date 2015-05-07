@@ -79,6 +79,7 @@ public class SubmitNewOp extends ActionBarActivity {
             m.messageID = null;
             m.parentID = null;
             m.timePosted = null;
+            m.uname = null;
 
             JSONObject submission = new JSONObject(new GsonBuilder().create().toJson(m));
 

@@ -66,9 +66,10 @@ public class threadDetailFragment extends ListFragment {
 
         OP = getArguments().getParcelable(IDStrings.OP_ID);
 
-        View itemView = this.getActivity().findViewById(R.id.current_OP);
+        //View itemView = this.getActivity().findViewById(R.id.current_OP);
 
-        AdapterViewGenerators.populate(itemView, OP);
+        //AdapterViewGenerators.populate(itemView, OP);
+
 
         Log.d("JSON", "FORMING REQUEST");
         Response.Listener<JSONArray> responseListener = new Response.Listener<JSONArray>() {
@@ -77,8 +78,13 @@ public class threadDetailFragment extends ListFragment {
                 Log.d("JSON", response.toString());
                 GsonBuilder gsonBuilder = new GsonBuilder();
                 replyList = gsonBuilder.create().fromJson(response.toString(), Message[].class);
-                setListAdapter(new replyListAdapter(getActivity().getApplicationContext(), R.layout.activity_thread_list, replyList));
-
+                Message[] temp = new Message[replyList.length+1];
+                System.arraycopy(replyList, 0, temp, 1, replyList.length);
+                temp[0] = OP;
+                replyList = temp;
+                if(replyList != null) {
+                    setListAdapter(new replyListAdapter(getActivity().getApplicationContext(), R.layout.activity_thread_list, replyList));
+                }
 
             }
         };
@@ -116,6 +122,7 @@ public class threadDetailFragment extends ListFragment {
         m.lat = null;
         m.lon = null;
         m.timePosted = null;
+        m.uname = null;
 
         try {
 

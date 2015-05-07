@@ -4,21 +4,14 @@
     android:orientation="vertical"
     android:layout_height="match_parent">
 
-    <include
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        layout="@layout/op_list_item"
-        android:id="@+id/current_OP"
-        android:layout_gravity="center_horizontal|top"
-        android:windowSoftInputMode="adjustResize"/>
-
     <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:id="@+id/thread_detail_container"
     android:layout_width="fill_parent" android:layout_height="wrap_content"
     tools:context="groovycarnage.com.hermes.activity.threads.threadDetailActivity"
     android:windowSoftInputMode="adjustResize"
     tools:ignore="MergeRootFrame"
-        android:layout_weight="5" >
+        android:layout_weight="5"
+        android:background="#ff666666">
 
     </FrameLayout>
 

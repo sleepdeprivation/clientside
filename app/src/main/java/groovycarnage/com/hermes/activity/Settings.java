@@ -66,6 +66,7 @@ public class Settings extends ActionBarActivity{
         SharedPreferences newSettings = getSharedPreferences("MyPrefsFile", 0); // gets settings
         double result = newSettings.getFloat("windowSizeFloat", 5); // gets double from settings named "windowSize"
         */
+        finish();
     }
 
 }
